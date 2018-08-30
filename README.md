@@ -1,7 +1,6 @@
 # ts-docker-node-starter
-quick starting point for a typescript node app with a dockerfile included
 
-
+extremely passive discord moderation built in typescript
 
 ```sh
 docker build -t pretty .
