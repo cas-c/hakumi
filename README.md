@@ -1,7 +1,7 @@
-# ts-docker-node-starter
+# hakumi
 
 extremely passive discord moderation built in typescript
 
 ```sh
-docker build -t pretty .
+docker build -t hakumi .
 ```

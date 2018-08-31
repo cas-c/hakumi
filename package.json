@@ -1,25 +1,29 @@
 {
-  "name": "pretty",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "build": "npm run build-ts && npm run tslint",
-    "build-ts": "tsc",
-    "start": "node dist/index.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "tslint": "tslint -c tslint.json -p tsconfig.json",
-    "watch": "concurrently -k -p \"[{name}]\" -n \"Sass,TypeScript,Node\" -c \"yellow.bold,cyan.bold,green.bold\" \"npm run watch-ts\" \"npm run watch-node\"",
-    "watch-node": "nodemon dist/index.js",
-    "watch-ts": "tsc -w"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "devDependencies": {
-    "concurrently": "^4.0.1",
-    "nodemon": "^1.18.4",
-    "tslint": "^5.11.0",
-    "typescript": "^3.0.3"
-  }
+    "name": "hakumi",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "build": "npm run build-ts && npm run tslint",
+        "build-ts": "tsc",
+        "start": "node dist/index.js",
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "tslint": "tslint -c tslint.json -p tsconfig.json",
+        "watch": "concurrently -k -p \"[{name}]\" -n \"Sass,TypeScript,Node\" -c \"yellow.bold,cyan.bold,green.bold\" \"npm run watch-ts\" \"npm run watch-node\"",
+        "watch-node": "nodemon dist/index.js",
+        "watch-ts": "tsc -w"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "devDependencies": {
+        "@types/node": "^10.9.4",
+        "concurrently": "^4.0.1",
+        "nodemon": "^1.18.4",
+        "tslint": "^5.11.0",
+        "typescript": "^3.0.3"
+    },
+    "dependencies": {
+        "discord.js": "github:discordjs/discord.js"
+    }
 }
