@@ -1,5 +1,6 @@
 import Discord from "discord.js";
 import { DateTime } from "luxon";
+import config from "./config";
 
 const simpleEmbed = (user: Discord.User, title: string) => {
     return new Discord.MessageEmbed()
