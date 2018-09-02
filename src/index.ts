@@ -1,4 +1,4 @@
-import Discord from "discord.js";
+import Discord, { TextChannel } from "discord.js";
 import { DateTime } from "luxon";
 import config from "./config";
 
@@ -36,9 +36,34 @@ const richerEmbed = (member: Discord.GuildMember, title: string) => {
             true,
         )
         .addField("Roles", member.roles.array().join(" "))
-        .setColor("#7289da")
+        .setColor(config.color)
         .setThumbnail(member.user.displayAvatarURL())
         .setTimestamp(new Date());
+};
+//  .setDescription(message.url);
+
+const deleteEmbed = (message: Discord.Message) => {
+    const response = new Discord.MessageEmbed()
+        .setTitle(
+            `Message from ${message.author.username} deleted in #${
+                (message.channel as TextChannel).name
+            }`,
+        )
+        .addField("Links", `${message.author} @ ${message.channel}`)
+        .setTimestamp(new Date())
+        .setColor(config.color);
+    // Things that may or may not exist.
+    if (message.cleanContent) {
+        response.addField("Deleted Text", message.cleanContent);
+    }
+    const attachment = message.attachments.first();
+    if (attachment && attachment.proxyURL) {
+        response.addField(
+            "Deleted Attachment",
+            `[View Attachment](${attachment.proxyURL})`,
+        );
+    }
+    return response;
 };
 
 Hakumi.on("ready", () => {
@@ -51,6 +76,10 @@ Hakumi.on("ready", () => {
 
 Hakumi.on("message", (message: Discord.Message) => {
     console.log(message.cleanContent);
+});
+
+Hakumi.on("messageDelete", (message: Discord.Message) => {
+    home.send(deleteEmbed(message));
 });
 
 Hakumi.on("guildMemberAdd", (member: Discord.GuildMember) => {
@@ -69,9 +98,15 @@ Hakumi.on("guildBanRemove", (guild: Discord.Guild, user: Discord.User) => {
     home.send(simpleEmbed(user, "Unban"));
 });
 
+Hakumi.on("disconnect", () => home.send(`disconnecting... <@${config.owner}>`));
+Hakumi.on("reconnecting", () => home.send("reconnected."));
+
 Hakumi.on("error", error => {
-    console.error(error);
-    home.send(error);
+    home.send(`<@${config.owner}> \n` + error.message);
+});
+
+Hakumi.on("warn", warning => {
+    home.send(`<@${config.owner}> \n` + warning);
 });
 
 Hakumi.login(config.token);
