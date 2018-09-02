@@ -13,8 +13,37 @@ Hakumi.on("ready", () => {
     }
 });
 
+const exists = (arr: string[], str: string) => arr.some(a => str.includes(a));
+const exempt = (id: string) => exists(config.exempt, id);
+const banned = (text: string) => exists(config.banned, text);
+
+const listen = (message: Discord.Message) => {
+    if (exempt(message.author.id)) return false;
+    if (banned(message.cleanContent)) {
+        if (message.deletable) message.delete();
+        if (message.member.bannable) message.member.ban();
+        return true;
+    }
+    return true;
+};
+
 Hakumi.on("message", (message: Discord.Message) => {
-    console.log(message.cleanContent);
+    if (message.author.bot) return;
+    let censored = false;
+    if (message.guild && message.member && message.type === "DEFAULT") {
+        censored = listen(message);
+    }
+    if (!censored) {
+        console.log("continue");
+    }
+    if (message.cleanContent === "test censor") {
+        Hakumi.emit("message", {
+            author: { id: "unreal" },
+            guild: message.guild,
+            member: message.member,
+            type: message.type,
+        });
+    }
 });
 
 Hakumi.on("messageDelete", (message: Discord.Message) => {
