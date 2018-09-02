@@ -1,7 +1,8 @@
 {
-  "extends": "tslint:latest",
-  "rules": {
-    "indent": [true, "spaces", 4],
-    "no-console": false
-  }
+    "extends": "tslint:latest",
+    "rules": {
+        "arrow-parens": false,
+        "indent": [true, "spaces", 4],
+        "no-console": false
+    }
 }
