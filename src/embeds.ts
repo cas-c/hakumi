@@ -63,4 +63,35 @@ const deleteEmbed = (message: Discord.Message) => {
     return response;
 };
 
-export { richerEmbed, deleteEmbed, simpleEmbed };
+const warningEmbed = (message: Discord.Message) => {
+    const response = new Discord.MessageEmbed()
+        .setTitle("🚨 Funny Alert 🚨")
+        .addField(
+            "User",
+            `${message.member} (${message.member.user.username}#${
+                message.member.user.discriminator
+            })`,
+            true,
+        )
+        .addField(
+            "Channel",
+            `${message.channel} (#${
+                (message.channel as Discord.TextChannel).name
+            })`,
+            true,
+        )
+        .addField("Message", message.cleanContent)
+        .addField("Link", message.url)
+        .setTimestamp(new Date())
+        .setColor(config.color);
+    const attachment = message.attachments.first();
+    if (attachment && attachment.proxyURL) {
+        response.addField(
+            "Deleted Attachment",
+            `[View Attachment](${attachment.proxyURL})`,
+        );
+    }
+    return response;
+};
+
+export { richerEmbed, deleteEmbed, simpleEmbed, warningEmbed };
