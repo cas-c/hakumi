@@ -83,6 +83,7 @@ const warningEmbed = (message: Discord.Message) => {
         .addField("Message", message.cleanContent)
         .addField("Link", message.url)
         .setTimestamp(new Date())
+        .setThumbnail(message.member.user.displayAvatarURL())
         .setColor(config.color);
     const attachment = message.attachments.first();
     if (attachment && attachment.proxyURL) {
