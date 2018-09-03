@@ -42,6 +42,7 @@ Hakumi.on("message", (message: Discord.Message) => {
 });
 
 Hakumi.on("messageDelete", (message: Discord.Message) => {
+    if (exempt(message.author.id)) return;
     home.send(deleteEmbed(message));
 });
 
