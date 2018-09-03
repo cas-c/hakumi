@@ -36,12 +36,8 @@ const listen = (message: Discord.Message) => {
 
 Hakumi.on("message", (message: Discord.Message) => {
     if (message.author.bot) return;
-    let censored = false;
     if (message.guild && message.member && message.type === "DEFAULT") {
-        censored = listen(message);
-    }
-    if (!censored) {
-        console.log("continue");
+        listen(message);
     }
 });
 
