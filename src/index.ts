@@ -42,7 +42,7 @@ Hakumi.on("message", (message: Discord.Message) => {
 });
 
 Hakumi.on("messageDelete", (message: Discord.Message) => {
-    if (exempt(message.author.id)) return;
+    if (exempt(message.author.id) || config.env === "dev") return;
     home.send(deleteEmbed(message));
 });
 
@@ -51,6 +51,11 @@ Hakumi.on("guildMemberAdd", (member: Discord.GuildMember) => {
 });
 
 Hakumi.on("guildMemberRemove", (member: Discord.GuildMember) => {
+    console.log(member.user);
+    console.log(member.user.createdAt);
+    console.log(member.user.createdTimestamp);
+    console.log(member.joinedAt);
+    console.log(member.joinedTimestamp);
     home.send(richerEmbed(member, "Part"));
 });
 
