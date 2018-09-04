@@ -51,11 +51,6 @@ Hakumi.on("guildMemberAdd", (member: Discord.GuildMember) => {
 });
 
 Hakumi.on("guildMemberRemove", (member: Discord.GuildMember) => {
-    console.log(member.user);
-    console.log(member.user.createdAt);
-    console.log(member.user.createdTimestamp);
-    console.log(member.joinedAt);
-    console.log(member.joinedTimestamp);
     home.send(richerEmbed(member, "Part"));
 });
 
