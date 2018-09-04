@@ -27,9 +27,9 @@ const richerEmbed = (member: Discord.GuildMember, title: string) => {
         )
         .addField(
             "Joined",
-            DateTime.fromMillis(member.joinedTimestamp).toFormat(
+            member.joinedTimestamp ? DateTime.fromMillis(member.joinedTimestamp).toFormat(
                 "yyyy LLL dd HH:mm",
-            ),
+            ) : "Can't detect join date of an uncached user.",
             true,
         )
         .addField("Roles", member.roles.array().join(" "))
