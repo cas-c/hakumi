@@ -4,12 +4,20 @@ import { deleteEmbed, richerEmbed, simpleEmbed, warningEmbed } from "./embeds";
 
 const Hakumi = new Discord.Client();
 let home: Discord.TextChannel;
+let reactionTracker: Discord.Message;
 
-Hakumi.on("ready", () => {
+Hakumi.on("ready", async () => {
     console.log(`logged in as ${Hakumi.user.tag}.`);
-    home = Hakumi.channels.get(config.home.channel) as Discord.TextChannel;
+    home = (await Hakumi.channels.get(
+        config.home.channel,
+    )) as Discord.TextChannel;
     if (config.env !== "dev") {
         home.send("logged in.");
+    }
+    if (config.reaction.listener) {
+        reactionTracker = await (Hakumi.channels.get(
+            config.reaction.channel,
+        ) as Discord.TextChannel).messages.fetch(config.reaction.message);
     }
 });
 
@@ -67,40 +75,49 @@ const reactionEvents: any = {
 };
 
 Hakumi.on("raw", async (event: any) => {
-    if (!config.reactionListener) return;
+    if (!config.reaction.listener) return;
     if (!reactionEvents.hasOwnProperty(event.t)) return;
     const { d: data } = event;
-    if (data.message_id !== config.reactionMessage) return;
+    if (data.message_id !== config.reaction.message) return;
     const member = Hakumi.guilds
         .get(config.home.guild)
         .members.get(data.user_id);
     if (!member) return;
-
-    const channel = Hakumi.channels.get(data.channel_id);
-
-    if ((channel as Discord.TextChannel).messages.has(data.message_id)) return;
-
-    const message = await (channel as Discord.TextChannel).messages.fetch(
-        data.message_id,
-    );
+    console.log(reactionTracker);
+    if (!reactionTracker) {
+        reactionTracker = await (Hakumi.channels.get(
+            config.reaction.channel,
+        ) as Discord.TextChannel).messages.fetch(config.reaction.message);
+    }
+    if (member.roles.has(config.reaction.role)) return;
     const emojiKey = data.emoji.id || data.emoji.name;
     const reaction =
-        message.reactions.get(emojiKey) || message.reactions.add(data);
-
+        reactionTracker.reactions.get(emojiKey) ||
+        reactionTracker.reactions.add(data);
     Hakumi.emit(reactionEvents[event.t], reaction, member);
-    if (message.reactions.size === 1) message.reactions.delete(emojiKey);
+    if (reactionTracker.reactions.size === 1)
+        reactionTracker.reactions.delete(emojiKey);
 });
 
 Hakumi.on(
     "customReactionAdd",
     (reaction: Discord.ReactionEmoji, member: Discord.GuildMember) => {
-        member.roles.add([member.guild.roles.get(config.reactionRole)]);
+        member.roles.add([member.guild.roles.get(config.reaction.role)]);
     },
 );
 
-Hakumi.on("disconnect", () => home.send(`disconnecting... <@${config.owner}>`));
+Hakumi.on("disconnect", () => console.log("disconnected"));
 Hakumi.on("reconnecting", () => home.send("reconnected."));
-Hakumi.on("error", error => home.send(`<@${config.owner}> \n` + error.message));
-Hakumi.on("warn", warning => home.send(`<@${config.owner}> \n` + warning));
+Hakumi.on(
+    "error",
+    error =>
+        console.error(error) &&
+        home.send(`<@${config.owner}> \n` + error.message),
+);
+Hakumi.on(
+    "warn",
+    warning =>
+        console.warn(warning) && home.send(`<@${config.owner}> \n` + warning),
+);
 
 Hakumi.login(config.token);
