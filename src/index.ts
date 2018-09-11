@@ -83,7 +83,6 @@ Hakumi.on("raw", async (event: any) => {
         .get(config.home.guild)
         .members.get(data.user_id);
     if (!member) return;
-    console.log(reactionTracker);
     if (!reactionTracker) {
         reactionTracker = await (Hakumi.channels.get(
             config.reaction.channel,
