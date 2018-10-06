@@ -1,6 +1,7 @@
 import Discord from "discord.js";
 import config from "./config";
 import { deleteEmbed, richerEmbed, simpleEmbed, warningEmbed } from "./embeds";
+import joinClub from "./members";
 
 const Hakumi = new Discord.Client();
 let home: Discord.TextChannel;
@@ -9,14 +10,14 @@ let reactionTracker: Discord.Message;
 Hakumi.on("ready", async () => {
     console.log(`logged in as ${Hakumi.user.tag}.`);
     home = (await Hakumi.channels.get(
-        config.home.channel,
+        config.home.channel
     )) as Discord.TextChannel;
     if (config.env !== "dev") {
         home.send("logged in.");
     }
     if (config.reaction.listener) {
         reactionTracker = await (Hakumi.channels.get(
-            config.reaction.channel,
+            config.reaction.channel
         ) as Discord.TextChannel).messages.fetch(config.reaction.message);
     }
 });
@@ -45,12 +46,17 @@ const listen = (message: Discord.Message) => {
 Hakumi.on("message", (message: Discord.Message) => {
     if (message.author.bot) return;
     if (message.guild && message.member && message.type === "DEFAULT") {
+        if (message.cleanContent.toLowerCase().indexOf(config.club.code) > -1) {
+            joinClub(message, exempt(message.author.id));
+            return;
+        }
         listen(message);
     }
 });
 
 Hakumi.on("messageDelete", (message: Discord.Message) => {
     if (exempt(message.author.id) || config.env === "dev") return;
+    if (message.cleanContent.toLowerCase() === config.club.code) return;
     home.send(deleteEmbed(message));
 });
 
@@ -71,7 +77,7 @@ Hakumi.on("guildBanRemove", (guild: Discord.Guild, user: Discord.User) => {
 });
 
 const reactionEvents: any = {
-    MESSAGE_REACTION_ADD: "customReactionAdd",
+    MESSAGE_REACTION_ADD: "customReactionAdd"
 };
 
 Hakumi.on("raw", async (event: any) => {
@@ -85,7 +91,7 @@ Hakumi.on("raw", async (event: any) => {
     if (!member) return;
     if (!reactionTracker) {
         reactionTracker = await (Hakumi.channels.get(
-            config.reaction.channel,
+            config.reaction.channel
         ) as Discord.TextChannel).messages.fetch(config.reaction.message);
     }
     if (member.roles.has(config.reaction.role)) return;
@@ -102,21 +108,18 @@ Hakumi.on(
     "customReactionAdd",
     (reaction: Discord.ReactionEmoji, member: Discord.GuildMember) => {
         member.roles.add([member.guild.roles.get(config.reaction.role)]);
-    },
+    }
 );
 
 Hakumi.on("disconnect", () => console.log("disconnected"));
 Hakumi.on("reconnecting", () => home.send("reconnected."));
-Hakumi.on(
-    "error",
-    error =>
-        console.error(error) &&
-        home.send(`<@${config.owner}> \n` + error.message),
-);
-Hakumi.on(
-    "warn",
-    warning =>
-        console.warn(warning) && home.send(`<@${config.owner}> \n` + warning),
-);
+Hakumi.on("error", error => {
+    console.error(error);
+    home.send(`<@${config.owner}> \n` + error.message);
+});
+Hakumi.on("warn", warning => {
+    console.warn(warning);
+    home.send(`<@${config.owner}> \n` + warning);
+});
 
 Hakumi.login(config.token);
