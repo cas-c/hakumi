@@ -4,6 +4,7 @@
         "arrow-parens": false,
         "curly": false,
         "indent": [true, "spaces", 4],
-        "no-console": false
+        "no-console": false,
+        "trailing-comma": false
     }
 }
