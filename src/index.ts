@@ -1,7 +1,7 @@
 import Discord from "discord.js";
 import config from "./config";
 import { deleteEmbed, richerEmbed, simpleEmbed, warningEmbed } from "./embeds";
-import joinClub from "./members";
+import { joinClub, leaveClub } from "./members";
 
 const Hakumi = new Discord.Client();
 let home: Discord.TextChannel;
@@ -48,6 +48,10 @@ Hakumi.on("message", (message: Discord.Message) => {
     if (message.guild && message.member && message.type === "DEFAULT") {
         if (message.cleanContent.toLowerCase().indexOf(config.club.code) > -1) {
             joinClub(message, exempt(message.author.id));
+            return;
+        }
+        if (message.cleanContent.toLowerCase() === config.club.unsub) {
+            leaveClub(message);
             return;
         }
         listen(message);
