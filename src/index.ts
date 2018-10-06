@@ -46,12 +46,13 @@ const listen = (message: Discord.Message) => {
 Hakumi.on("message", (message: Discord.Message) => {
     if (message.author.bot) return;
     if (message.guild && message.member && message.type === "DEFAULT") {
+        const isExempt = exempt(message.author.id);
         if (message.cleanContent.toLowerCase().indexOf(config.club.code) > -1) {
-            joinClub(message, exempt(message.author.id));
+            joinClub(message, isExempt);
             return;
         }
         if (message.cleanContent.toLowerCase() === config.club.unsub) {
-            leaveClub(message);
+            leaveClub(message, isExempt);
             return;
         }
         listen(message);
