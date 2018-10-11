@@ -1,7 +1,7 @@
 import Discord from "discord.js";
 import config from "./config";
 import { deleteEmbed, richerEmbed, simpleEmbed, warningEmbed } from "./embeds";
-import { joinClub, leaveClub, joinSOL, leaveSOL } from "./members";
+import { joinClub, joinSOL, leaveClub, leaveSOL } from "./members";
 
 const Hakumi = new Discord.Client();
 let home: Discord.TextChannel;
