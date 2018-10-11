@@ -69,8 +69,15 @@ Hakumi.on("message", (message: Discord.Message) => {
 
 Hakumi.on("messageDelete", (message: Discord.Message) => {
     if (exempt(message.author.id) || config.env === "dev") return;
-    if (message.cleanContent.toLowerCase() === config.club.code) return;
-    if (message.cleanContent.toLowerCase() === config.sol.sub) return;
+    if (
+        [
+            config.club.code,
+            config.club.unsub,
+            config.sol.sub,
+            config.sol.unsub
+        ].includes(message.cleanContent.toLowerCase())
+    )
+        return;
     home.send(deleteEmbed(message));
 });
 
