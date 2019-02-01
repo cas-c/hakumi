@@ -68,7 +68,12 @@ Hakumi.on("message", (message: Discord.Message) => {
 });
 
 Hakumi.on("messageDelete", (message: Discord.Message) => {
-    if (exempt(message.author.id) || config.env === "dev") return;
+    if (
+        exempt(message.author.id) ||
+        exempt(message.channel.id) ||
+        config.env === "dev"
+    )
+        return;
     if (
         [
             config.club.code,
